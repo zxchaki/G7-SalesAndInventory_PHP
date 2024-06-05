@@ -1,6 +1,12 @@
 <?php
 date_default_timezone_set('Asia/Manila'); // Set the default timezone to Manila
-$user = current_user(); ?>
+$user = current_user();
+
+// Initialize critical stock count session variable if not already set
+if (!isset($_SESSION['critical_stock_count'])) {
+  $_SESSION['critical_stock_count'] = 0;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -19,13 +25,14 @@ $user = current_user(); ?>
     /* Logo positioning */
     .logo img {
       height: 50px;
-      background-color: #94E1E4;
+      background-color: #35EEF8;
     }
 
     .header-content {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: linear-gradient(to right, #35EEF8, #0FB1CF,#2299D3,#3B7AD9,#525EDE); 
     }
 
     .header-title {
@@ -37,6 +44,7 @@ $user = current_user(); ?>
     .header-navigation {
       flex-grow: 1;
       text-align: center;
+      
     }
 
     .header-navigation a {
@@ -47,10 +55,11 @@ $user = current_user(); ?>
 
     .header-navigation a i {
       font-size: 20px;
+      color: aliceblue;
     }
 
-    .header-navigation a:hover {
-      color: #000;
+    .header-navigation a:hover i{
+      color:#333;
     }
 
     .info-menu {
@@ -61,6 +70,7 @@ $user = current_user(); ?>
 
     .header-date {
       margin-left: 20px;
+      color:aliceblue;
     }
 
     .tooltip-inner {
@@ -77,7 +87,16 @@ $user = current_user(); ?>
     #icon_choose_file {
       margin-right: 10px;
     }
+    .badge{
+      background-color: orangered;
+    }
+    .add-group-btn {
+    background-color: #525EDE; /* Default background color */
+    }
 
+    .add-group-btn:hover {
+    background-color: #3175B8; /* Background color on hover */
+    }
     /* Responsive styles */
 
     @media (max-width: 768px) {
@@ -149,7 +168,9 @@ $user = current_user(); ?>
       <div class="header-content">
 
         <div class="header-title">
+          <span style="font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">
           SALES AND INVENTORY SYSTEM
+          </span>
         </div>
         <div class="header-navigation">
           <a href="home.php" data-toggle="tooltip" data-placement="bottom" title="Home"><i class="glyphicon glyphicon-home"></i> </a>
@@ -159,6 +180,10 @@ $user = current_user(); ?>
           <a href="media.php" data-toggle="tooltip" data-placement="bottom" title="Media Files"><i class="glyphicon glyphicon-picture"></i> </a>
           <a href="sales.php#" data-toggle="tooltip" data-placement="bottom" title="Sales"><i class="glyphicon glyphicon-credit-card"></i> </a>
           <a href="sales_report.php" data-toggle="tooltip" data-placement="bottom" title="Generate Sales Report"><i class="glyphicon glyphicon-duplicate"></i></a>
+          <a href="#" id="notificationBell" data-toggle="modal" data-target="#lowStockModal" data-toggle="tooltip" data-placement="bottom" title="Low Stock">
+            <i class="glyphicon glyphicon-bell"></i>
+            <?php echo $_SESSION['critical_stock_count'] > 0 ? '<span class="badge">' . $_SESSION['critical_stock_count'] . '</span>' : ''; ?>
+          </a>
         </div>
         <div class="header-date pull-left">
           <strong><?php echo date("F j, Y, g:i a"); ?></strong>
@@ -188,6 +213,7 @@ $user = current_user(); ?>
                     <i class="glyphicon glyphicon-off"></i>
                     Logout
                   </a>
+                </li>
               </ul>
             </li>
           </ul>
